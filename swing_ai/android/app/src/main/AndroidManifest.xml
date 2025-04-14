@@ -1,4 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Required for gyroscope/accelerometer access -->
+    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
+
+    <!-- Feature declaration for camera -->
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <!-- Feature declaration for microphone (optional but often needed by camera) -->
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <!-- Feature declaration for gyroscope -->
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
+    <!-- Feature declaration for accelerometer -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+
     <application
         android:label="swing_ai"
         android:name="${applicationName}"

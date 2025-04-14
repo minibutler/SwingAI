@@ -1,68 +1,72 @@
 import 'package:flutter/material.dart';
-import '../models/club.dart';
+import 'package:provider/provider.dart'; // Import provider
+
+// Simple state management for selected club
+class ClubSelectionState extends ChangeNotifier {
+  String _selectedClub = '7 Iron'; // Default club
+  final List<String> _availableClubs = ['Driver', '7 Iron', 'PW'];
+
+  String get selectedClub => _selectedClub;
+  List<String> get availableClubs => _availableClubs;
+
+  void selectClub(String club) {
+    if (_availableClubs.contains(club)) {
+      _selectedClub = club;
+      notifyListeners();
+    }
+  }
+}
 
 class ClubSelector extends StatelessWidget {
-  final Club selectedClub;
-  final Function(Club) onClubSelected;
+  final String? selectedClub;
+  final Function(String)? onClubSelected;
 
   const ClubSelector({
     super.key,
-    required this.selectedClub,
-    required this.onClubSelected,
+    this.selectedClub,
+    this.onClubSelected,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Access the state using Provider
+    final clubState = Provider.of<ClubSelectionState>(context);
+
+    // Use selectedClub from props if provided, otherwise from Provider
+    final currentClub = selectedClub ?? clubState.selectedClub;
+    final clubs = clubState.availableClubs;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(16.0),
+        color: Colors.black.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8.0),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Select Club:',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children:
-                Club.availableClubs.map((club) {
-                  final isSelected = club.id == selectedClub.id;
-                  return _buildClubOption(club, isSelected);
-                }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildClubOption(Club club, bool isSelected) {
-    return GestureDetector(
-      onTap: () => onClubSelected(club),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.green : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: isSelected ? Colors.green : Colors.white30,
-            width: 1.0,
-          ),
-        ),
-        child: Text(
-          club.name,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.white70,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: currentClub,
+          icon: const Icon(Icons.arrow_downward, color: Colors.white),
+          dropdownColor: Colors.black.withOpacity(0.7),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              // Call onClubSelected callback if provided
+              if (onClubSelected != null) {
+                onClubSelected!(newValue);
+              }
+              // Update the provider state if no callback is provided
+              else {
+                Provider.of<ClubSelectionState>(context, listen: false)
+                    .selectClub(newValue);
+              }
+            }
+          },
+          items: clubs.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
         ),
       ),
     );

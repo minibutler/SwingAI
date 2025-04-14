@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:swing_ai/models/swing_data.dart';
+import '../models/swing_data.dart';
 
 import '../models/club.dart';
 import '../models/swing_analysis.dart';
+import 'package:swing_ai/screens/analysis_screen.dart';
+import 'package:swing_ai/widgets/swing_history_item.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -15,12 +19,16 @@ class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<SwingAnalysis> _mockSwingHistory = [];
+  List<SwingData> _swingHistory = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _generateMockData();
+    _loadHistory();
   }
 
   @override
@@ -118,6 +126,58 @@ class _HistoryScreenState extends State<HistoryScreen>
     );
   }
 
+  Future<void> _loadHistory() async {
+    if (!mounted) return; // Avoid state updates if widget is disposed
+    setState(() {
+      _isLoading = true;
+      _error = null; // Clear previous errors
+    });
+    try {
+      // TODO: Replace with actual call to FirebaseService
+      // _swingHistory = await FirebaseService.getSwingHistory(limit: 10);
+      await Future.delayed(
+          const Duration(seconds: 1)); // Simulate network delay
+
+      // Generate more varied dummy data for testing UI
+      _swingHistory = List.generate(5, (index) {
+        final club = ['Driver', '7 Iron', 'PW', 'Driver', '7 Iron'][index % 5];
+        final List<String> errors = (index % 3 == 0)
+            ? <String>['Over-the-top']
+            : (index % 3 == 1)
+                ? <String>['Casting', 'Early Extension']
+                : <String>[];
+        return SwingData(
+          id: 'swing$index',
+          timestamp:
+              DateTime.now().subtract(Duration(days: index, hours: index * 3)),
+          selectedClub: club,
+          swingSpeedMph: 90.0 + index * 2.5 - (club == 'PW' ? 15 : 0),
+          ballSpeedMph: 120.0 + index * 4 - (club == 'PW' ? 25 : 0),
+          carryDistanceYards: 150.0 +
+              index * 10 -
+              (club == 'PW' ? 80 : 0) +
+              (club == 'Driver' ? 80 : 0),
+          detectedErrors: errors,
+        );
+      });
+      // Sort by timestamp descending
+      _swingHistory.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    } catch (e) {
+      print("Error loading history: $e");
+      if (mounted) {
+        setState(() {
+          _error = "Failed to load swing history.";
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,32 +191,84 @@ class _HistoryScreenState extends State<HistoryScreen>
             Tab(text: 'Stats'),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // All swings tab
-          _buildSwingHistoryList(),
-
-          // By club tab
-          _buildClubFilterView(),
-
-          // Stats tab
-          _buildStatsView(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _isLoading ? null : _loadHistory, // Allow refresh
+            tooltip: 'Refresh History',
+          )
         ],
       ),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_error != null) {
+      return Center(
+          child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: Colors.red.shade700, size: 48),
+            const SizedBox(height: 16),
+            Text(_error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.red.shade900)),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _loadHistory, child: const Text('Retry')),
+          ],
+        ),
+      ));
+    }
+    if (_swingHistory.isEmpty) {
+      return const Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.history_toggle_off, size: 60, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('No swing history yet.',
+              style: TextStyle(fontSize: 18, color: Colors.grey)),
+          Text('Record your first swing!',
+              style: TextStyle(fontSize: 14, color: Colors.grey)),
+        ],
+      ));
+    }
+
+    // Display history using ListView and SwingHistoryItem
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+      itemCount: _swingHistory.length,
+      itemBuilder: (context, index) {
+        final swing = _swingHistory[index];
+        return SwingHistoryItem(
+          swing: swing,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AnalysisScreen(swingData: swing),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   // Build the list of all swings
   Widget _buildSwingHistoryList({Club? filterClub}) {
     // Apply filter if provided
-    final filteredSwings =
-        filterClub != null
-            ? _mockSwingHistory
-                .where((swing) => swing.club.id == filterClub.id)
-                .toList()
-            : _mockSwingHistory;
+    final filteredSwings = filterClub != null
+        ? _mockSwingHistory
+            .where((swing) => swing.club.id == filterClub.id)
+            .toList()
+        : _mockSwingHistory;
 
     if (filteredSwings.isEmpty) {
       return const Center(child: Text('No swing history found'));
@@ -311,24 +423,23 @@ class _HistoryScreenState extends State<HistoryScreen>
           // Club selection
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children:
-                Club.availableClubs.map((club) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _tabController.animateTo(0);
-                        // This would filter the list in a full implementation
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    child: Text(club.name),
-                  );
-                }).toList(),
+            children: Club.availableClubs.map((club) {
+              return ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _tabController.animateTo(0);
+                    // This would filter the list in a full implementation
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+                child: Text(club.name),
+              );
+            }).toList(),
           ),
 
           const SizedBox(height: 24),

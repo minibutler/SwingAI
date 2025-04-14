@@ -1026,57 +1026,60 @@ PODS:
     - GoogleUtilities/Environment (~> 7.12)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - Flutter (1.0.0)
-  - google_mlkit_barcode_scanning (0.7.0):
+  - google_mlkit_barcode_scanning (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/BarcodeScanning (~> 4.0.0)
-  - google_mlkit_commons (0.4.0):
+  - google_mlkit_commons (0.5.0):
     - Flutter
     - MLKitVision
-  - google_mlkit_digital_ink_recognition (0.8.0):
+  - google_mlkit_digital_ink_recognition (0.9.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/DigitalInkRecognition (~> 4.0.0)
-  - google_mlkit_entity_extraction (0.8.0):
+  - google_mlkit_entity_extraction (0.9.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/EntityExtraction (~> 4.0.0)
-  - google_mlkit_face_detection (0.7.0):
+  - google_mlkit_face_detection (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/FaceDetection (~> 4.0.0)
-  - google_mlkit_image_labeling (0.7.0):
+  - google_mlkit_face_mesh_detection (0.0.1):
+    - Flutter
+    - google_mlkit_commons
+  - google_mlkit_image_labeling (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/ImageLabeling (~> 4.0.0)
     - GoogleMLKit/ImageLabelingCustom (~> 4.0.0)
-  - google_mlkit_language_id (0.7.0):
+  - google_mlkit_language_id (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/LanguageID (~> 4.0.0)
-  - google_mlkit_object_detection (0.8.0):
+  - google_mlkit_object_detection (0.9.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/ObjectDetection (~> 4.0.0)
     - GoogleMLKit/ObjectDetectionCustom (~> 4.0.0)
-  - google_mlkit_pose_detection (0.7.0):
+  - google_mlkit_pose_detection (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/PoseDetection (~> 4.0.0)
     - GoogleMLKit/PoseDetectionAccurate (~> 4.0.0)
-  - google_mlkit_selfie_segmentation (0.4.0):
+  - google_mlkit_selfie_segmentation (0.5.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/SegmentationSelfie (~> 4.0.0)
-  - google_mlkit_smart_reply (0.7.0):
+  - google_mlkit_smart_reply (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/SmartReply (~> 4.0.0)
-  - google_mlkit_text_recognition (0.7.0):
+  - google_mlkit_text_recognition (0.9.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/TextRecognition (~> 4.0.0)
-  - google_mlkit_translation (0.7.0):
+  - google_mlkit_translation (0.8.0):
     - Flutter
     - google_mlkit_commons
     - GoogleMLKit/Translate (~> 4.0.0)
@@ -1413,6 +1416,7 @@ DEPENDENCIES:
   - google_mlkit_digital_ink_recognition (from `.symlinks/plugins/google_mlkit_digital_ink_recognition/ios`)
   - google_mlkit_entity_extraction (from `.symlinks/plugins/google_mlkit_entity_extraction/ios`)
   - google_mlkit_face_detection (from `.symlinks/plugins/google_mlkit_face_detection/ios`)
+  - google_mlkit_face_mesh_detection (from `.symlinks/plugins/google_mlkit_face_mesh_detection/ios`)
   - google_mlkit_image_labeling (from `.symlinks/plugins/google_mlkit_image_labeling/ios`)
   - google_mlkit_language_id (from `.symlinks/plugins/google_mlkit_language_id/ios`)
   - google_mlkit_object_detection (from `.symlinks/plugins/google_mlkit_object_detection/ios`)
@@ -1431,14 +1435,19 @@ DEPENDENCIES:
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
 
 SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - FirebaseAppCheckInterop
+    - FirebaseCore
+    - GTMSessionFetcher
+    - MLKitCommon
+    - MLKitVision
+    - SSZipArchive
   trunk:
     - abseil
     - BoringSSL-GRPC
     - Firebase
-    - FirebaseAppCheckInterop
     - FirebaseAuth
     - FirebaseAuthInterop
-    - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseFirestore
@@ -1452,11 +1461,9 @@ SPEC REPOS:
     - GoogleUtilitiesComponents
     - "gRPC-C++"
     - gRPC-Core
-    - GTMSessionFetcher
     - leveldb-library
     - MLImage
     - MLKitBarcodeScanning
-    - MLKitCommon
     - MLKitDigitalInkRecognition
     - MLKitEntityExtraction
     - MLKitFaceDetection
@@ -1478,13 +1485,11 @@ SPEC REPOS:
     - MLKitTextRecognition
     - MLKitTextRecognitionCommon
     - MLKitTranslate
-    - MLKitVision
     - MLKitVisionKit
     - MLKitXenoCommon
     - nanopb
     - PromisesObjC
     - RecaptchaInterop
-    - SSZipArchive
     - TensorFlowLiteC
     - TensorFlowLiteSwift
 
@@ -1511,6 +1516,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_mlkit_entity_extraction/ios"
   google_mlkit_face_detection:
     :path: ".symlinks/plugins/google_mlkit_face_detection/ios"
+  google_mlkit_face_mesh_detection:
+    :path: ".symlinks/plugins/google_mlkit_face_mesh_detection/ios"
   google_mlkit_image_labeling:
     :path: ".symlinks/plugins/google_mlkit_image_labeling/ios"
   google_mlkit_language_id:
@@ -1564,19 +1571,20 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 20530f495084b8d840f78a100d8c5ee613375f6e
   FirebaseStorage: 44f4e25073f6fa0d4d8c09f5bec299ee9e4eb985
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  google_mlkit_barcode_scanning: 39d556459a57fa71ceb38d47c14ebcbf5e30a6fc
-  google_mlkit_commons: 3b36c846f46e20c9f7921638dbbbc3510360423a
-  google_mlkit_digital_ink_recognition: e50da8c4b845c5efdbc552fd02a779b43095dd8b
-  google_mlkit_entity_extraction: b49a4fea5b0549b819cb4b033d931625596e3082
-  google_mlkit_face_detection: 08725c06af0166952dfefba7521f9c314850264a
-  google_mlkit_image_labeling: 184693661d9b815864f504834cac5035299d3caa
-  google_mlkit_language_id: e6c34f5211d2070318465f434b56ff5f4a6830fd
-  google_mlkit_object_detection: 98c0b1e17111a69d51a8c68af1fa0648301e9667
-  google_mlkit_pose_detection: 271da44c16047ea775bf8e6f3281dac29e2ba0a0
-  google_mlkit_selfie_segmentation: 89fd11374ac7bc19eedd047caebe4e7f5a270f3d
-  google_mlkit_smart_reply: 9447455155dd150167e6bbcdaf03733c2baa8a4e
-  google_mlkit_text_recognition: 2a987384b7da13da4f0074006a919cc106b8abf8
-  google_mlkit_translation: 3493938ff9ab969f20011a5120d6001f16b63fbd
+  google_mlkit_barcode_scanning: b1d3f4d4c44f405ac844b80525058a5253207d0b
+  google_mlkit_commons: 8c42b5f6f6b7efa19adaf7e32613abf59bba88ad
+  google_mlkit_digital_ink_recognition: a07f060576d4ba64989d880c8fa728120d7a6da3
+  google_mlkit_entity_extraction: 4450889555ef4e66edbf2fb1553a488da2aa6e24
+  google_mlkit_face_detection: c7d628cb5cbfddf97bebe6120bfafd09a7b52a81
+  google_mlkit_face_mesh_detection: 4aa75b34f8370d55b111f9fee5eeb11255608c38
+  google_mlkit_image_labeling: bd545b5626cd5038d3236b35feb3e2cf0cd91915
+  google_mlkit_language_id: 5997a7b04d3940c7b930ff59c458309b4d7696ed
+  google_mlkit_object_detection: 83427f0eb9dcf83a1ca1242fb97b1985fdf4043d
+  google_mlkit_pose_detection: 83fb47c223838a46c9e441b9535a1b1cab71f6cd
+  google_mlkit_selfie_segmentation: b4884aca36319d80854758388aa6df5d2b792346
+  google_mlkit_smart_reply: fc6ddc08efdf5e88ec9908560f0276feb4d8d5f4
+  google_mlkit_text_recognition: f77aacaeebcdfc27ba1866896874da926a018d37
+  google_mlkit_translation: 9fb409ad97ba654d80bd58b7733b406377454ef2
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleMLKit: 2bd0dc6253c4d4f227aad460f69215a504b2980e
   GoogleToolboxForMac: 8bef7c7c5cf7291c687cf5354f39f9db6399ad34
@@ -1628,6 +1636,6 @@ SPEC CHECKSUMS:
   tflite_flutter: 64b192e11352fe36943ab6656e1d49207f1a5595
   video_player_avfoundation: 2cef49524dd1f16c5300b9cd6efd9611ce03639b
 
-PODFILE CHECKSUM: e30f02f9d1c72c47bb6344a0a748c9d268180865
+PODFILE CHECKSUM: 94e2ff2dd37712c60ad353c1fad1964ecf3f17eb
 
 COCOAPODS: 1.16.2

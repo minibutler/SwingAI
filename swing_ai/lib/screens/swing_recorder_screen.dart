@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../models/club.dart';
 import '../widgets/club_selector.dart';
 import '../utils/logger.dart';
+import '../models/swing_data.dart';
 
 class SwingRecorderScreen extends StatefulWidget {
   const SwingRecorderScreen({super.key});
@@ -219,10 +220,25 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
         _isRecording = false;
       });
 
-      // Navigate to the analysis screen with the video path and selected club
+      // Create a SwingData object for the analysis
+      final swingData = SwingData(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        timestamp: DateTime.now(),
+        selectedClub: _selectedClub.name,
+        swingSpeedMph: 85.5, // Example value - would be calculated from video
+        ballSpeedMph: _selectedClub.calculateBallSpeed(85.5), // Example
+        carryDistanceYards:
+            _selectedClub.calculateCarryDistance(85.5), // Example
+        detectedErrors: [
+          'Overswing',
+          'Casting'
+        ], // Example errors - would be detected by AI
+      );
+
+      // Navigate to analysis screen with swingData
       Navigator.of(context).pushNamed(
-        '/analyzing',
-        arguments: {'videoPath': videoFile.path, 'club': _selectedClub},
+        '/analysis',
+        arguments: swingData,
       );
     } catch (e) {
       Logger.error('Error stopping video recording', e);
@@ -248,7 +264,13 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
   }
 
   // Handle club selection
-  void _onClubSelected(Club club) {
+  void _onClubSelected(String clubName) {
+    // Find the club by name
+    final club = Club.availableClubs.firstWhere(
+      (club) => club.name == clubName,
+      orElse: () => Club.driver, // Default to driver if not found
+    );
+
     setState(() {
       _selectedClub = club;
     });
@@ -333,7 +355,7 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
                     children: [
                       // Club selector
                       ClubSelector(
-                        selectedClub: _selectedClub,
+                        selectedClub: _selectedClub.name,
                         onClubSelected: _onClubSelected,
                       ),
 

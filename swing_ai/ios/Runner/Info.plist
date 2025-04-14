@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to record your golf swing for analysis.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to record audio along with your swing video (optional).</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app needs motion access to use the gyroscope for enhancing swing speed calculation.</string>
 </dict>
 </plist>

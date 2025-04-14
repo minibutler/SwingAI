@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart'; // Import Provider
+import 'package:swing_ai/widgets/club_selector.dart'; // Import ClubSelectionState
+// import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+// import 'firebase_options.dart'; // Default Firebase config file
 
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -9,9 +13,19 @@ import 'screens/swing_analysis_result_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/profile_screen.dart';
 import 'models/swing_analysis.dart';
+import 'app.dart'; // Import the main app widget
+// import 'services/services.dart'; // To initialize services
 
-Future<void> main() async {
+void main() async {
+  // Ensure Flutter binding is initialized before calling native code
   WidgetsFlutterBinding.ensureInitialized();
+
+  // TODO: Initialize Firebase
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+
+  // TODO: Initialize other services if needed (e.g., MLService)
 
   // Lock the app to portrait orientation
   await SystemChrome.setPreferredOrientations([
@@ -19,10 +33,13 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Initialize Firebase (in production app)
-  // await Firebase.initializeApp();
-
-  runApp(const SwingAIApp());
+  // Wrap the app with ChangeNotifierProvider for ClubSelectionState
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ClubSelectionState(),
+      child: const SwingApp(),
+    ),
+  );
 }
 
 class SwingAIApp extends StatelessWidget {
@@ -72,9 +89,8 @@ class SwingAIApp extends StatelessWidget {
         '/history': (context) => const HistoryScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/analyzing': (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
           return AnalyzingScreen(
             videoPath: args['videoPath'],
             club: args['club'],
