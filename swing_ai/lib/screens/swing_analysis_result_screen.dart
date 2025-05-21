@@ -66,8 +66,7 @@ class _SwingAnalysisResultScreenState extends State<SwingAnalysisResultScreen> {
 
   // Share results
   void _shareResults() {
-    final String result =
-        'My SwingAI analysis results:\n'
+    final String result = 'My SwingAI analysis results:\n'
         'Club: ${widget.analysis.club.name}\n'
         'Swing speed: ${widget.analysis.swingSpeedMph} mph\n'
         'Ball speed: ${widget.analysis.ballSpeedMph} mph\n'
@@ -93,34 +92,34 @@ class _SwingAnalysisResultScreenState extends State<SwingAnalysisResultScreen> {
             // Video player
             _videoInitialized
                 ? GestureDetector(
-                  onTap: _togglePlayback,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: _videoController.value.aspectRatio,
-                        child: VideoPlayer(_videoController),
-                      ),
-                      if (!_videoController.value.isPlaying)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                            size: 48,
-                          ),
+                    onTap: _togglePlayback,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: _videoController.value.aspectRatio,
+                          child: VideoPlayer(_videoController),
                         ),
-                    ],
-                  ),
-                )
+                        if (!_videoController.value.isPlaying)
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: const BoxDecoration(
+                              color: Colors.black54,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                              size: 48,
+                            ),
+                          ),
+                      ],
+                    ),
+                  )
                 : const AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+                    aspectRatio: 16 / 9,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
 
             // Analysis overview
             Padding(

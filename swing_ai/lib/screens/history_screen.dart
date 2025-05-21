@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:swing_ai/models/swing_data.dart';
-import '../models/swing_data.dart';
 
 import '../models/club.dart';
 import '../models/swing_analysis.dart';

@@ -16,14 +16,14 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   # Camera and media processing
-  camera: ^0.11.0+1
-  video_player: ^2.8.6
+  camera: ^0.11.1
+  video_player: ^2.8.7
   image_picker: ^1.0.7
 
   # Media processing and ML Kit – updated version for better native compatibility
-  google_mlkit_pose_detection: ^0.12.0
-  tflite_flutter: ^0.10.4
-  sensors_plus: ^5.0.1
+  google_mlkit_pose_detection: ^0.14.0
+  tflite_flutter: ^0.11.0
+  sensors_plus: ^6.1.1
   uuid: ^4.3.3
 
   # Firebase services – updated to compatible versions
@@ -33,26 +33,26 @@ dependencies:
   cloud_firestore: ^4.17.5
 
   # State management
-  provider: ^6.1.1
+  provider: ^6.1.5
 
   # UI components
-  fl_chart: ^0.70.2
-  flutter_svg: ^2.0.9
-  lottie: ^3.0.0
+  fl_chart: ^1.0.0
+  flutter_svg: ^2.1.0
+  lottie: ^3.1.0
 
   # Utilities
-  path_provider: ^2.1.3
-  permission_handler: ^11.3.1
-  shared_preferences: ^2.2.2
-  intl: ^0.19.0
+  path_provider: ^2.1.4
+  permission_handler: ^12.0.0+1
+  shared_preferences: ^2.2.3
+  intl: ^0.20.2
   share_plus: ^10.0.0
-  path: ^1.8.3
+  path: ^1.9.0
   vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

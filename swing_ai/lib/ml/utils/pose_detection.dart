@@ -111,11 +111,11 @@ class PoseDetector {
 // Mock classes for development until actual MediaPipe integration
 class MockPoseLandmark extends PoseLandmark {
   MockPoseLandmark({
-    required double x,
-    required double y,
-    double z = 0.0,
-    double visibility = 1.0,
-  }) : super(x: x, y: y, z: z, visibility: visibility);
+    required super.x,
+    required super.y,
+    super.z,
+    super.visibility = 1.0,
+  });
 }
 
 class MockPoseDetectionResult extends PoseDetectionResult {
