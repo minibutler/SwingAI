@@ -3,6 +3,7 @@ import 'package:swing_ai/screens/analysis_screen.dart'; // Import AnalysisScreen
 import 'package:swing_ai/screens/history_screen.dart'; // Import HistoryScreen
 import 'package:swing_ai/screens/recording_screen.dart'; // Import RecordingScreen
 import 'package:swing_ai/models/swing_data.dart'; // Import SwingData model
+import 'package:swing_ai/screens/club_selection_screen.dart'; // Import ClubSelectionScreen
 
 // Placeholder for the main application widget
 class SwingApp extends StatelessWidget {
@@ -35,7 +36,7 @@ class SwingApp extends StatelessWidget {
       // Define routes for potential named navigation later
       routes: {
         '/recording': (context) => const RecordingScreen(),
-        // Removed '/analysis' route as it requires arguments
+        '/clubs': (context) => const ClubSelectionScreen(),
         '/history': (context) => const HistoryScreen(),
       },
       // Add onGenerateRoute to handle routes that require arguments

@@ -1,40 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
+import 'package:swing_ai/providers/club_selection_provider.dart';
+import 'package:swing_ai/models/golf_club.dart';
+import 'package:swing_ai/screens/club_selection_screen.dart';
 
-// Simple state management for selected club
-class ClubSelectionState extends ChangeNotifier {
-  String _selectedClub = '7 Iron'; // Default club
-  final List<String> _availableClubs = ['Driver', '7 Iron', 'PW'];
-
-  String get selectedClub => _selectedClub;
-  List<String> get availableClubs => _availableClubs;
-
-  void selectClub(String club) {
-    if (_availableClubs.contains(club)) {
-      _selectedClub = club;
-      notifyListeners();
-    }
-  }
-}
-
+// The ClubSelector widget displays the currently selected club
+// and allows the user to select a different club from their bag
 class ClubSelector extends StatelessWidget {
-  final String? selectedClub;
-  final Function(String)? onClubSelected;
+  final String? selectedClubId;
+  final Function(GolfClub)? onClubSelected;
 
   const ClubSelector({
     super.key,
-    this.selectedClub,
+    this.selectedClubId,
     this.onClubSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Access the state using Provider
-    final clubState = Provider.of<ClubSelectionState>(context);
+    final provider = Provider.of<ClubSelectionProvider>(context);
 
-    // Use selectedClub from props if provided, otherwise from Provider
-    final currentClub = selectedClub ?? clubState.selectedClub;
-    final clubs = clubState.availableClubs;
+    // Get the selected clubs from the provider
+    final List<GolfClub> selectedClubs = provider.selectedClubs;
+
+    // If no clubs are selected, show a button to set up clubs
+    if (selectedClubs.isEmpty) {
+      return _buildSetupButton(context);
+    }
+
+    // Get current club or default to first selected club
+    GolfClub currentClub;
+    if (selectedClubId != null) {
+      // Find selected club by ID
+      try {
+        currentClub = selectedClubs.firstWhere(
+          (club) => club.id == selectedClubId,
+        );
+      } catch (_) {
+        // If not found, default to first club
+        currentClub = selectedClubs.first;
+      }
+    } else {
+      // Default to first club
+      currentClub = selectedClubs.first;
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -44,30 +53,51 @@ class ClubSelector extends StatelessWidget {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: currentClub,
+          value: currentClub.id,
           icon: const Icon(Icons.arrow_downward, color: Colors.white),
           dropdownColor: Colors.black.withOpacity(0.7),
           style: const TextStyle(color: Colors.white, fontSize: 16),
           onChanged: (String? newValue) {
             if (newValue != null) {
-              // Call onClubSelected callback if provided
-              if (onClubSelected != null) {
-                onClubSelected!(newValue);
-              }
-              // Update the provider state if no callback is provided
-              else {
-                Provider.of<ClubSelectionState>(context, listen: false)
-                    .selectClub(newValue);
+              try {
+                final selectedClub = selectedClubs.firstWhere(
+                  (club) => club.id == newValue,
+                );
+
+                // Call onClubSelected callback if provided
+                if (onClubSelected != null) {
+                  onClubSelected!(selectedClub);
+                }
+              } catch (_) {
+                // If the club isn't found, we don't need to do anything
               }
             }
           },
-          items: clubs.map<DropdownMenuItem<String>>((String value) {
+          items: selectedClubs.map<DropdownMenuItem<String>>((GolfClub club) {
             return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
+              value: club.id,
+              child: Text('${club.type} (${club.loft}°)'),
             );
           }).toList(),
         ),
+      ),
+    );
+  }
+
+  // Build a button to navigate to the club selection screen
+  Widget _buildSetupButton(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ClubSelectionScreen()),
+        );
+      },
+      icon: const Icon(Icons.golf_course),
+      label: const Text('Set Up Your Clubs'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black.withOpacity(0.5),
+        foregroundColor: Colors.white,
       ),
     );
   }

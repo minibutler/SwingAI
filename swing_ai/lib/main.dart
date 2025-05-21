@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart'; // Import Provider
-import 'package:swing_ai/widgets/club_selector.dart'; // Import ClubSelectionState
+import 'package:provider/provider.dart';
+import 'package:swing_ai/providers/club_selection_provider.dart';
 // import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 // import 'firebase_options.dart'; // Default Firebase config file
 
@@ -33,10 +33,12 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Wrap the app with ChangeNotifierProvider for ClubSelectionState
+  // Wrap the app with MultiProvider for state management
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ClubSelectionState(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ClubSelectionProvider()),
+      ],
       child: const SwingApp(),
     ),
   );

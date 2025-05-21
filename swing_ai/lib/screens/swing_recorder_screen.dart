@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 import '../models/club.dart';
 import '../widgets/club_selector.dart';
 import '../utils/logger.dart';
 import '../models/swing_data.dart';
+import '../models/golf_club.dart';
+import '../providers/club_selection_provider.dart';
 
 class SwingRecorderScreen extends StatefulWidget {
   const SwingRecorderScreen({super.key});
@@ -23,6 +26,7 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
   bool _isRecording = false;
   bool _isFrontCamera = false;
   Club _selectedClub = Club.driver;
+  GolfClub? _selectedGolfClub;
   int _countdownValue = 0;
 
   @override
@@ -212,7 +216,7 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
 
     try {
       // Stop recording and get the file
-      final XFile videoFile = await _controller!.stopVideoRecording();
+      await _controller!.stopVideoRecording();
 
       if (!mounted) return;
 
@@ -220,11 +224,19 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
         _isRecording = false;
       });
 
+      // Get club type from the selected golf club
+      String clubType = _selectedClub.name;
+
+      // If a new golf club is selected, use that instead
+      if (_selectedGolfClub != null) {
+        clubType = _selectedGolfClub!.type;
+      }
+
       // Create a SwingData object for the analysis
       final swingData = SwingData(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         timestamp: DateTime.now(),
-        selectedClub: _selectedClub.name,
+        selectedClub: clubType,
         swingSpeedMph: 85.5, // Example value - would be calculated from video
         ballSpeedMph: _selectedClub.calculateBallSpeed(85.5), // Example
         carryDistanceYards:
@@ -263,16 +275,19 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
     _initializeCamera();
   }
 
-  // Handle club selection
-  void _onClubSelected(String clubName) {
-    // Find the club by name
-    final club = Club.availableClubs.firstWhere(
-      (club) => club.name == clubName,
-      orElse: () => Club.driver, // Default to driver if not found
-    );
-
+  // Handle golf club selection from the new model
+  void _onGolfClubSelected(GolfClub club) {
     setState(() {
-      _selectedClub = club;
+      _selectedGolfClub = club;
+
+      // Also update the old club model for compatibility
+      // Find a similar club in the old model
+      String clubType = club.type;
+      final similarClub = Club.availableClubs.firstWhere(
+        (c) => c.name.contains(clubType) || clubType.contains(c.name),
+        orElse: () => Club.driver,
+      );
+      _selectedClub = similarClub;
     });
   }
 
@@ -353,10 +368,25 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      // Club selector
-                      ClubSelector(
-                        selectedClub: _selectedClub.name,
-                        onClubSelected: _onClubSelected,
+                      // Club selector - use the new ClubSelector widget
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClubSelector(
+                            selectedClubId: _selectedGolfClub?.id,
+                            onClubSelected: _onGolfClubSelected,
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/clubs');
+                            },
+                            tooltip: 'Manage Clubs',
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 24),
@@ -395,7 +425,7 @@ class _SwingRecorderScreenState extends State<SwingRecorderScreen>
                       const SizedBox(height: 8),
 
                       Text(
-                        'Selected: ${_selectedClub.name}',
+                        'Selected: ${_selectedGolfClub?.type ?? _selectedClub.name}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,

@@ -36,15 +36,13 @@ class ErrorIndicator extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            ...errors
-                .map((error) => Padding(
-                    padding: const EdgeInsets.only(
-                        left: 32.0, top: 4.0), // Indent error text
-                    child: Text(
-                      '• $error', // Bullet point
-                      style: TextStyle(fontSize: 14, color: Colors.orange[800]),
-                    )))
-                .toList(),
+            ...errors.map((error) => Padding(
+                padding: const EdgeInsets.only(
+                    left: 32.0, top: 4.0), // Indent error text
+                child: Text(
+                  '• $error', // Bullet point
+                  style: TextStyle(fontSize: 14, color: Colors.orange[800]),
+                ))),
           ],
         ),
       ),

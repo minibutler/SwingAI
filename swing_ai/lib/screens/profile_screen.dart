@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swing_ai/screens/club_selection_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -144,6 +145,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const Divider(),
                   _buildSettingItem(
+                    'My Golf Clubs',
+                    Icons.golf_course,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ClubSelectionScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  _buildSettingItem(
                     'Subscription Plan',
                     Icons.card_membership,
                     onTap: () {
@@ -259,53 +273,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Edit Profile'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    readOnly: true, // Email is read-only in MVP
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: heightController,
-                    decoration: const InputDecoration(labelText: 'Height (cm)'),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Profile'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                readOnly: true, // Email is read-only in MVP
               ),
-              TextButton(
-                onPressed: () {
-                  // In a real app, this would update the user profile
-                  // For MVP, just close the dialog
-                  Navigator.of(context).pop();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Profile updated successfully'),
-                    ),
-                  );
-                },
-                child: const Text('Save'),
+              const SizedBox(height: 16),
+              TextField(
+                controller: heightController,
+                decoration: const InputDecoration(labelText: 'Height (cm)'),
+                keyboardType: TextInputType.number,
               ),
             ],
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              // In a real app, this would update the user profile
+              // For MVP, just close the dialog
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Profile updated successfully'),
+                ),
+              );
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -313,48 +326,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showUpgradeDialog() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Upgrade Plan'),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: Text('Free'),
-                  subtitle: Text('3 analyses per day'),
-                  trailing: Icon(Icons.check_circle, color: Colors.green),
-                ),
-                ListTile(
-                  title: Text('Pro - \$9.99/month'),
-                  subtitle: Text('Unlimited analyses + AR overlay'),
-                ),
-                ListTile(
-                  title: Text('Elite - \$29.99/month'),
-                  subtitle: Text('Live pro reviews + equipment recs'),
-                ),
-              ],
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade Plan'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Free'),
+              subtitle: Text('3 analyses per day'),
+              trailing: Icon(Icons.check_circle, color: Colors.green),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // In a real app, this would initiate the upgrade process
-                  // For MVP, just close the dialog
-                  Navigator.of(context).pop();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Subscription upgrade coming soon'),
-                    ),
-                  );
-                },
-                child: const Text('Upgrade'),
-              ),
-            ],
+            ListTile(
+              title: Text('Pro - \$9.99/month'),
+              subtitle: Text('Unlimited analyses + AR overlay'),
+            ),
+            ListTile(
+              title: Text('Elite - \$29.99/month'),
+              subtitle: Text('Live pro reviews + equipment recs'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
           ),
+          TextButton(
+            onPressed: () {
+              // In a real app, this would initiate the upgrade process
+              // For MVP, just close the dialog
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Subscription upgrade coming soon'),
+                ),
+              );
+            },
+            child: const Text('Upgrade'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -362,25 +374,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _confirmLogout() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Log Out'),
-            content: const Text('Are you sure you want to log out?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // In a real app, this would perform logout
-                  // For MVP, navigate to login screen
-                  Navigator.of(context).pushReplacementNamed('/login');
-                },
-                child: const Text('Log Out'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Log Out'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
           ),
+          TextButton(
+            onPressed: () {
+              // In a real app, this would perform logout
+              // For MVP, navigate to login screen
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+            child: const Text('Log Out'),
+          ),
+        ],
+      ),
     );
   }
 }

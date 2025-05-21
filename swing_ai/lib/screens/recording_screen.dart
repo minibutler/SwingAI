@@ -6,6 +6,8 @@ import 'package:camera/camera.dart'; // Requires camera dependency
 import 'package:swing_ai/screens/analysis_screen.dart'; // For navigation
 import 'package:swing_ai/widgets/club_selector.dart'; // Import ClubSelector
 import 'package:swing_ai/models/swing_data.dart'; // Import SwingData for dummy data
+import 'package:swing_ai/providers/club_selection_provider.dart'; // Import new provider
+import 'package:swing_ai/models/golf_club.dart'; // Import GolfClub model
 
 class RecordingScreen extends StatefulWidget {
   const RecordingScreen({super.key});
@@ -19,6 +21,7 @@ class _RecordingScreenState extends State<RecordingScreen> {
   List<CameraDescription>? _cameras;
   bool _isCameraInitialized = false;
   bool _isRecording = false;
+  GolfClub? _selectedClub;
   // TODO: Add state for sensor data
 
   @override
@@ -111,19 +114,27 @@ class _RecordingScreenState extends State<RecordingScreen> {
       print('Recording stopped. Video saved to: ${videoFile.path}');
 
       // --- Placeholder Analysis & Navigation ---
-      // TODO: Replace with actual call to analysis service
-      final selectedClub =
-          Provider.of<ClubSelectionState>(context, listen: false).selectedClub;
+      // Get the selected club from the provider
+      final provider =
+          Provider.of<ClubSelectionProvider>(context, listen: false);
+      final selectedClubs = provider.selectedClubs;
+
+      // Use the first selected club or a default value if none selected
+      final clubToUse = _selectedClub ??
+          (selectedClubs.isNotEmpty ? selectedClubs.first : null);
+
+      final clubName = clubToUse != null ? clubToUse.type : "7 Iron";
+
       // Create dummy analysis results
       final dummyResult = SwingData(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           timestamp: DateTime.now(),
-          selectedClub: selectedClub,
-          swingSpeedMph: 95.5 + (selectedClub == 'Driver' ? 10 : 0),
-          ballSpeedMph: 135.2 + (selectedClub == 'Driver' ? 15 : 0),
-          carryDistanceYards: 160 + (selectedClub == 'Driver' ? 80 : 0),
+          selectedClub: clubName,
+          swingSpeedMph: 95.5 + (clubName == 'Driver' ? 10 : 0),
+          ballSpeedMph: 135.2 + (clubName == 'Driver' ? 15 : 0),
+          carryDistanceYards: 160 + (clubName == 'Driver' ? 80 : 0),
           detectedErrors:
-              selectedClub == 'PW' ? [] : ['Over-the-top'] // Example error
+              clubName == 'PW' ? [] : ['Over-the-top'] // Example error
           );
 
       // Navigate to Analysis Screen with results
@@ -143,6 +154,12 @@ class _RecordingScreenState extends State<RecordingScreen> {
         });
       }
     }
+  }
+
+  void _onClubSelected(GolfClub club) {
+    setState(() {
+      _selectedClub = club;
+    });
   }
 
   @override
@@ -166,7 +183,27 @@ class _RecordingScreenState extends State<RecordingScreen> {
                     top: 16,
                     left: 16,
                     right: 16,
-                    child: Center(child: ClubSelector()), // Center the selector
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClubSelector(
+                            selectedClubId: _selectedClub?.id,
+                            onClubSelected: _onClubSelected,
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/clubs');
+                            },
+                            tooltip: 'Manage Clubs',
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   // Recording Button at the bottom
                   Positioned(
