@@ -6,7 +6,9 @@ class ClubSelectionProvider with ChangeNotifier {
   UserClubs _userClubs = UserClubs();
   bool _isLoading = true;
 
-  ClubSelectionProvider() {
+  ClubSelectionProvider();
+
+  void init() {
     _loadUserClubs();
   }
 
