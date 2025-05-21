@@ -74,7 +74,7 @@ class UserClubsStorage {
       final String json = jsonEncode(userClubs.toJson());
       return await prefs.setString(_storageKey, json);
     } catch (e) {
-      print('Error saving user clubs: $e');
+      log('Error saving user clubs: $e', level: 1000);
       return false;
     }
   }
