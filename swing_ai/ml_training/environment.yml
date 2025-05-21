@@ -14,4 +14,4 @@ dependencies:
   - pip:
     - opencv-python==4.9.0.80
     - tflite-runtime==2.15.0
-    - tqdm==4.66.2 
+    - tqdm==4.66.2
